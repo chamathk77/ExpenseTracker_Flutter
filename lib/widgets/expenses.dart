@@ -37,14 +37,54 @@ class _ExpensesState extends State<Expenses> {
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
       useSafeArea: true,
-      // isScrollControlled: true,
+      isScrollControlled: true,
       context: context,
-      builder: (ctx) => NewExpense(),
+      builder: (ctx) => NewExpense(
+        onAddExpense: _addExpense,
+      ),
+    );
+  }
+
+  void _addExpense(expense) {
+    setState(() {
+      _registerdExpense.add(expense);
+    });
+  }
+
+  void _removeExpense(Expense expense) {
+
+    final expenseIndex = _registerdExpense.indexOf(expense);
+    setState(() {
+      _registerdExpense.remove(expense);
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 4),
+        content: const Text('Expense deleted'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+           setState(() {
+             _registerdExpense.insert(expenseIndex, expense);
+           });
+          },
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget mainContent = const Center(
+      child: Text('No expenses found. Start adding some!'),
+    );
+
+    if (_registerdExpense.isNotEmpty) {
+      mainContent = ExpensesList(
+          expenses: _registerdExpense, removeExpense: _removeExpense);
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Expense Tracker'),
@@ -58,7 +98,9 @@ class _ExpensesState extends State<Expenses> {
       body: Column(
         children: [
           const Text('The Chart'),
-          Expanded(child: ExpensesList(expenses: _registerdExpense))
+          Expanded(
+            child: mainContent,
+          )
         ],
       ),
     );
