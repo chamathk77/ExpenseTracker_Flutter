@@ -1,3 +1,4 @@
+import 'package:expense_tracker_flutter/widgets/chart/chart.dart';
 import 'package:expense_tracker_flutter/widgets/expenses%20list/expenses_list.dart';
 import 'package:expense_tracker_flutter/models/expense.dart';
 import 'package:expense_tracker_flutter/widgets/new_expense.dart';
@@ -52,7 +53,6 @@ class _ExpensesState extends State<Expenses> {
   }
 
   void _removeExpense(Expense expense) {
-
     final expenseIndex = _registerdExpense.indexOf(expense);
     setState(() {
       _registerdExpense.remove(expense);
@@ -66,9 +66,9 @@ class _ExpensesState extends State<Expenses> {
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
-           setState(() {
-             _registerdExpense.insert(expenseIndex, expense);
-           });
+            setState(() {
+              _registerdExpense.insert(expenseIndex, expense);
+            });
           },
         ),
       ),
@@ -97,7 +97,7 @@ class _ExpensesState extends State<Expenses> {
       ),
       body: Column(
         children: [
-          const Text('The Chart'),
+          Chart(expenses: _registerdExpense),
           Expanded(
             child: mainContent,
           )
